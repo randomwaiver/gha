@@ -21,6 +21,11 @@ jobs:
           git fetch --all
           git branch -r | grep -v main | sed 's+origin/++' > branches.txt
 
+      - name: Set git identity to triggering user
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
       - name: Create PRs to update .github in other branches
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
