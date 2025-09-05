@@ -19,7 +19,7 @@ jobs:
       - name: Get all remote branches
         run: |
           git fetch --all
-          git branch -r | grep -v main | sed 's/origin\\///' > branches.txt
+          git branch -r | grep -v main | sed 's+origin/++' > branches.txt
 
       - name: Create PRs to update .github in other branches
         env:
