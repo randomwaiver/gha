@@ -1,0 +1,34 @@
+name: Sync .github folder to other branches
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/**'
+
+jobs:
+  sync-github-folder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get all remote branches
+        run: |
+          git fetch --all
+          git branch -r | grep -v main | sed 's/origin\\///' > branches.txt
+
+      - name: Create PRs to update .github in other branches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          while read branch; do
+            git checkout $branch
+            git checkout main -- .github
+            git commit -am "Sync .github folder from main" || true
+            git push origin $branch
+            gh pr create --base $branch --head main --title "Sync .github folder" --body "Automated sync of .github folder from main" || true
+          done < branches.txt
