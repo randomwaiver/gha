@@ -1,6 +1,5 @@
 name: Test run_number variable
 
-
 on:
   workflow_dispatch:
   push:
